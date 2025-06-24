@@ -9,4 +9,6 @@ pip install -r requirements
 
 streamlit run script.py 
 
-That's it. Your program should be running. Enjoy 
+3. Upload sample data [excel sheet]
+
+That's it. Your program should be running and will return a csv file in a couple of minutes. Enjoy. 
