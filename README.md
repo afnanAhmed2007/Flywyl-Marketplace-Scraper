@@ -1,7 +1,12 @@
 # Flywyl-Marketplace-Scraper
 
-To run, type:
+
+1. Run requirements.txt file in terminal 
+
+pip install -r requirements 
+
+2. Run script.py in terminal 
 
 streamlit run script.py 
 
-in terminal
+That's it. Your program should be running. Enjoy 
