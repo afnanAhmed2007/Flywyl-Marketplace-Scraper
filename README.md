@@ -3,7 +3,7 @@
 
 1. Run requirements.txt file in terminal 
 
-pip install -r requirements 
+pip install -r requirements.txt
 
 2. Run script.py in terminal 
 
