@@ -67,11 +67,7 @@ async def extract_products(semaphore, browser, url, css_selector, marketplace):
                 if marketplace=="AWS":
 
                     # access a tag element for AWS
-                    a_tag = el.find(
-                    "a",
-                    href=True,
-                    string=lambda s: s and s.strip()        
-                    )
+                    a_tag = el.find("a", href=True, string=lambda s: s and s.strip())
 
                     # get name and link through a_tag
                     name = a_tag.get_text(strip=True) if a_tag else None
