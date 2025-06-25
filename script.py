@@ -11,7 +11,7 @@ from scrape import process_file
 
 
 # Set page config
-st.set_page_config(page_title="Upload Image", layout="centered")
+st.set_page_config(page_title="Flywl Marketplace Scraper", layout="centered")
 
 # CSS for styling -> makes background orange & black gradient
 st.markdown("""
