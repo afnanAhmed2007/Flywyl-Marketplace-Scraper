@@ -142,28 +142,33 @@ async def get_final_listings(semaphore, browser, Product, Vendor):
     # counter in terminal to see if results are being appended
     global counter 
 
-    # calling URL functions 
-    urls = [
-        AWSURL(Vendor),
-        AZUREURL(Vendor),
-        GCPURL(Vendor)
-    ]
+    try: 
+        # calling URL functions 
+        urls = [
+            AWSURL(Vendor),
+            AZUREURL(Vendor),
+            GCPURL(Vendor)
+        ]
 
-    # holding extract_products function to run concurrently 
-    tasks = [
-        extract_products(semaphore, browser, url, css_selector, marketplace)
-        for url, css_selector, marketplace in urls
-    ]
+        # holding extract_products function to run concurrently 
+        tasks = [
+            extract_products(semaphore, browser, url, css_selector, marketplace)
+            for url, css_selector, marketplace in urls
+        ]
 
-    # get scraped listings  concurrently 
-    aws, azure, gcp = await asyncio.gather(*tasks)
+        # get scraped listings  concurrently 
+        aws, azure, gcp = await asyncio.gather(*tasks)
 
-    # passing listings through fuzz_filter concurrently
-    aws_list, azure_list, gcp_list = await asyncio.gather(
-    asyncio.to_thread(fuzz_filter, aws, Product, Vendor),
-    asyncio.to_thread(fuzz_filter, azure, Product, Vendor),
-    asyncio.to_thread(fuzz_filter, gcp, Product, Vendor)
-    )
+        # passing listings through fuzz_filter concurrently
+        aws_list, azure_list, gcp_list = await asyncio.gather(
+        asyncio.to_thread(fuzz_filter, aws, Product, Vendor),
+        asyncio.to_thread(fuzz_filter, azure, Product, Vendor),
+        asyncio.to_thread(fuzz_filter, gcp, Product, Vendor)
+        )
+
+    # catching exceptions 
+    except Exception as e: 
+        aws_list = azure_list = gcp_list = None
 
     # printing counter 
     print(counter)
@@ -190,22 +195,19 @@ async def run_batch(product_vendor_list):
         # creating a browser
         browser = await p.chromium.launch(headless=True)
 
-        tasks = []
         for i in range(0, len(product_vendor_list), BATCH_SIZE):
 
-
             batch = product_vendor_list[i:i + BATCH_SIZE]
-
+             
             # creating batch task for products and running final_listings concurrently 
             batch_tasks = [
                 get_final_listings(semaphore, browser, product, vendor)
                 for product, vendor in batch
             ]
 
-            tasks.append(asyncio.gather(*batch_tasks, return_exceptions=True))
+            await asyncio.gather(*batch_tasks, return_exceptions=True)
 
-        # closing browser when task is finished
-        await asyncio.gather(*tasks, return_exceptions=True)
+        #closing the browser
         await browser.close()
 
 # converting file to a list
@@ -223,4 +225,3 @@ def process_file(file_obj):
 
     # returning dataframe of listings of products from all 3 marketplaces
     return pd.DataFrame(results_list)
-
